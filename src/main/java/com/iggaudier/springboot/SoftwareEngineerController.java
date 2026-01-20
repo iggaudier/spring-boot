@@ -1,8 +1,7 @@
 package com.iggaudier.springboot;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -10,19 +9,42 @@ import java.util.List;
 @RequestMapping("api/v1/software-engineers")
 public class SoftwareEngineerController {
 
+    private final SoftwareEngineerService softwareEngineerService;
+
+    public SoftwareEngineerController(SoftwareEngineerService softwareEngineerService) {
+        this.softwareEngineerService = softwareEngineerService;
+    }
+
     @GetMapping
     public List<SoftwareEngineer> getEngineers(){
-        return List.of(
-                new SoftwareEngineer(
-                        1,
-                        "James",
-                        "java, node, react, php"
-                ),
-                new SoftwareEngineer(
-                        2,
-                        "Dianne",
-                        "javascript, angular, ruby"
-                )
-        );
+        return softwareEngineerService.getAllSoftwareEngineers();
     }
+
+    @GetMapping("{id}")
+    public SoftwareEngineer getEngineerById(
+            @PathVariable Integer id
+    ){
+        return softwareEngineerService.getSoftwareEngineerById(id);
+    }
+
+    @PostMapping
+    public void addNewSoftwareEngineer(@RequestBody SoftwareEngineer softwareEngineer){
+        softwareEngineerService.insertSoftwareEngineer(softwareEngineer);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<SoftwareEngineer> updateSoftwareEngineer(
+            @PathVariable Integer id,
+            @RequestBody SoftwareEngineer softwareEngineer) {
+        SoftwareEngineer updated = softwareEngineerService.updateSoftwareEngineerById(id, softwareEngineer);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("{id}")
+    public SoftwareEngineer deleteSoftwareEngineer(
+            @PathVariable Integer id
+    ){
+        return softwareEngineerService.deleteSoftwareEngineerById(id);
+    }
+
 }
